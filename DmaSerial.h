@@ -14,11 +14,11 @@
 #ifndef _DMA_SERIAL_H_
 #define _DMA_SERIAL_H_
 
-#include "sam.h"								/**< Used for register mapping */
+#include "sam.h"				/**< Used for register mapping */
 
-#define MCLK			    (SystemCoreClock)	/**< Used for baud rate calculation */
+#define MCLK		    (SystemCoreClock)	/**< Used for baud rate calculation */
 
-#define DMA_SERIAL_RX_BUFFER_LENGTH		(128)	/**< Receiver buffer length */
+#define DMA_SERIAL_RX_BUFFER_LENGTH	(128)	/**< Receiver buffer length */
 #define DMA_SERIAL_TX_BUFFER_LENGTH 	(128)	/**< Transmit buffer length */
 
 /**
@@ -79,7 +79,7 @@ public:
 
 private:
 
-	Uart* uart;			/**< Pointer to U(S)ART */
+	Uart* uart;		/**< Pointer to U(S)ART */
 	uint32_t uart_id;	/**< U(SART) id */
 
 	uint8_t tx_buffer[DMA_SERIAL_TX_BUFFER_LENGTH];	/**< Transmit ring buffer */
