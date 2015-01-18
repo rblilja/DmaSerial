@@ -122,6 +122,11 @@ uint8_t DmaSerial::get(uint8_t* bytes, uint8_t length) {
 	return i; 
 }
 
+uint8_t DmaSerial::put(const char* str) {
+
+	return put((uint8_t*)str, strlen(str));	
+}
+
 uint8_t DmaSerial::put(uint8_t* bytes, uint8_t length) {
 
 	// Disable transmit PDC
