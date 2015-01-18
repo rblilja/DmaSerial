@@ -14,6 +14,8 @@
 #ifndef _DMA_SERIAL_H_
 #define _DMA_SERIAL_H_
 
+#include <string.h>				/**< strlen() */
+
 #include "sam.h"				/**< Used for register mapping */
 
 #define MCLK		    (SystemCoreClock)	/**< Used for baud rate calculation */
@@ -58,6 +60,14 @@ public:
 	 * @return the number of retrieved bytes. 
 	 */
 	uint8_t get(uint8_t* bytes, uint8_t length);
+	
+	/**
+	 * Puts a char array in the DMA transmit buffer.
+	 * Char array is assumed to be null-terminated.
+	 * @param str the char array.
+	 * @return the number of chars added to the transmit buffer.
+	 */
+	uint8_t put(const char* str);
 	
 	/**
 	 * Puts bytes in the DMA transmit buffer.
