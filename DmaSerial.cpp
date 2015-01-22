@@ -21,16 +21,18 @@ DmaSerial::DmaSerial(Uart* uart, uint32_t uart_id) {
 
 void DmaSerial::begin(const uint32_t baud) {
 
-	PMC->PMC_WPMR = 0x504D4300;			// Disable PMC register write-protection
-	PMC->PMC_PCER0 = (1 << uart_id);
-	PMC->PMC_WPMR = 0x504D4301;			// Enable PMC register write-protection
+	PMC->PMC_WPMR = 0x504D4300;		// Disable PMC register write-protection (see page 581)
+	PMC->PMC_PCER0 = (1 << uart_id);	// Enable Peripheral Clock
 	
+	// Enabling the PMC write-protection may break other lazy drivers..
+	//PMC->PMC_WPMR = 0x504D4301;		// Enable PMC register write-protection (see page 581)
+
 	// Disable
 	uart->UART_CR = UART_CR_RXDIS | UART_CR_TXDIS | UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RSTSTA;
 	
 	// Set 8N1 and baud rate
 	uart->UART_MR = 0xC0 | UART_MR_PAR_NO;
-	uart->UART_BRGR = (MCLK / baud) / 16;
+	uart->UART_BRGR = (DMA_SERIAL_CLK / baud) / 16;
 	
 	// Disable interrupts
   	uart->UART_IDR = 0xFFFFFFFF;
@@ -125,6 +127,11 @@ uint8_t DmaSerial::get(uint8_t* bytes, uint8_t length) {
 uint8_t DmaSerial::put(const char* str) {
 
 	return put((uint8_t*)str, strlen(str));	
+}
+
+uint8_t DmaSerial::putln(const char* str) {
+
+	return put(str) + put("\r\n");
 }
 
 uint8_t DmaSerial::put(uint8_t* bytes, uint8_t length) {
