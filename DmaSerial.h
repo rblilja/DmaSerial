@@ -14,14 +14,14 @@
 #ifndef _DMA_SERIAL_H_
 #define _DMA_SERIAL_H_
 
-#include <string.h>				/**< strlen() */
+#include <string.h>					/**< strlen() */
 
-#include "sam.h"				/**< Used for register mapping */
+#include "sam.h"					/**< Used for register mapping */
 
-#define MCLK		    (SystemCoreClock)	/**< Used for baud rate calculation */
+#define DMA_SERIAL_CLK		    (SystemCoreClock)	/**< Used for baud rate calculation */
 
-#define DMA_SERIAL_RX_BUFFER_LENGTH	(128)	/**< Receiver buffer length */
-#define DMA_SERIAL_TX_BUFFER_LENGTH 	(128)	/**< Transmit buffer length */
+#define DMA_SERIAL_RX_BUFFER_LENGTH		(128)	/**< Receiver buffer length */
+#define DMA_SERIAL_TX_BUFFER_LENGTH 		(128)	/**< Transmit buffer length */
 
 /**
  * DMA based serial communication class.
@@ -52,11 +52,11 @@ public:
 	 * @return the number of available bytes.
 	 */
 	uint8_t available();
-	
+		
 	/**
 	 * Gets bytes from DMA receiving buffer.
 	 * @param bytes pointer to beginning of buffer for retrieval. 
-	 * @param length number of bytes to be read to retrieval buffer. 
+	 * @param length number of bytes to be read to retrieval buffer.
 	 * @return the number of retrieved bytes. 
 	 */
 	uint8_t get(uint8_t* bytes, uint8_t length);
@@ -69,11 +69,13 @@ public:
 	 */
 	uint8_t put(const char* str);
 	
+	uint8_t putln(const char* str);
+		
 	/**
 	 * Puts bytes in the DMA transmit buffer.
 	 * @param bytes pointer to beginning of buffer containing data to be transmitted.
 	 * @param length number of bytes to be transmitted.
-	 * @return the number of bytes added to to transmit buffer.
+	 * @return the number of bytes added to the transmit buffer.
 	 */
 	uint8_t put(uint8_t* bytes, uint8_t length);
 	
@@ -89,7 +91,7 @@ public:
 
 private:
 
-	Uart* uart;		/**< Pointer to U(S)ART */
+	Uart* uart;			/**< Pointer to U(S)ART */
 	uint32_t uart_id;	/**< U(SART) id */
 
 	uint8_t tx_buffer[DMA_SERIAL_TX_BUFFER_LENGTH];	/**< Transmit ring buffer */
