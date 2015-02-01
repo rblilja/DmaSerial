@@ -1,53 +1,22 @@
 # DmaSerial
 Serial library utilising DMA on the SAM3X8E MCU (Arduino Due).  
 
-If used with the Arduino IDE, find variant.h and comment out the USARTClass and/or UARTClass objects that you want to replace with DmaSerial objects.
+If used with the Arduino IDE, find the file variant.h and comment out the USARTClass and/or UARTClass objects that you want to replace with DmaSerial objects.
 
-For an instance my variant.h looks like this:
+For an instance, if replacing Serial1, you shall comment out the lines containing:
 
-// ----------------------------------------------------------------------------
-/*
- * USART objects
- */
+RingBuffer rx_buffer2;
 
-//RingBuffer rx_buffer2;
-//RingBuffer rx_buffer3;
-//RingBuffer rx_buffer4;
+USARTClass Serial1(USART0, USART0_IRQn, ID_USART0, &rx_buffer2);
 
-//USARTClass Serial1(USART0, USART0_IRQn, ID_USART0, &rx_buffer2);
-void serialEvent1() __attribute__((weak));
-void serialEvent1() { }
-//USARTClass Serial2(USART1, USART1_IRQn, ID_USART1, &rx_buffer3);
-void serialEvent2() __attribute__((weak));
-void serialEvent2() { }
-//USARTClass Serial3(USART3, USART3_IRQn, ID_USART3, &rx_buffer4);
-void serialEvent3() __attribute__((weak));
-void serialEvent3() { }
+Serial1.IrqHandler();
 
-// IT handlers
-void USART0_Handler(void)
-{
-  //Serial1.IrqHandler();
-}
+if (Serial1.available()) serialEvent1();
 
-void USART1_Handler(void)
-{
-  //Serial2.IrqHandler();
-}
+Serial1.IrqHandler();
 
-void USART3_Handler(void)
-{
-  //Serial3.IrqHandler();
-}
+Then you simply instansiate (in the top of your sketch) a DmaSerial object as:
 
-// ----------------------------------------------------------------------------
+DmaSerial dma_serial1  = DmaSerial((Uart*)USART0, ID_USART0);
 
-void serialEventRun(void)
-{
-  /*
-  if (Serial.available()) serialEvent();
-  if (Serial1.available()) serialEvent1();
-  if (Serial2.available()) serialEvent2();
-  if (Serial3.available()) serialEvent3();
-  */
-}
+Use the put() and get() members to send/retreive data, don't forget to call begin() in the setup.
