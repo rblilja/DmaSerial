@@ -62,6 +62,14 @@ public:
 	uint8_t get(uint8_t* bytes, uint8_t length);
 	
 	/**
+	 * Gets bytes up to and including a new line character from DMA receiving buffer.
+	 * @param bytes pointer to beginning of buffer for retrieval. 
+	 * @param length maximum number of bytes to be read to retrieval buffer.
+	 * @return the number of retrieved bytes. 
+	 */
+	uint8_t getln(uint8_t* bytes, uint8_t length);
+	
+	/**
 	 * Puts a char array in the DMA transmit buffer.
 	 * Char array is assumed to be null-terminated.
 	 * @param str the char array.
