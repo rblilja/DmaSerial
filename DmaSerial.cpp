@@ -124,6 +124,54 @@ uint8_t DmaSerial::get(uint8_t* bytes, uint8_t length) {
 	return i; 
 }
 
+uint8_t DmaSerial::getln(uint8_t* bytes, uint8_t length) { 
+	
+	// Disable receive PDC
+	uart->UART_PTCR = UART_PTCR_RXTDIS;
+	
+	// Wait for PDC disable to take effect
+	while (uart->UART_PTSR & UART_PTSR_RXTEN);
+	
+	// Modulus needed if RNCR is zero and RPR counts to end of buffer
+	rx_tail = (uart->UART_RPR - (uint32_t)rx_buffer) % DMA_SERIAL_RX_BUFFER_LENGTH;
+	
+	// Make sure RPR follows (actually only needed if RRP is counted to the end of buffer and RNCR is zero)
+	uart->UART_RPR = (uint32_t)rx_buffer + rx_tail;
+	
+	// Update fill counter
+	rx_count = DMA_SERIAL_RX_BUFFER_LENGTH - uart->UART_RCR - uart->UART_RNCR;
+	
+	// No bytes in buffer to retrieve
+	if (rx_count == 0) { uart->UART_PTCR = UART_PTCR_RXTEN; return 0; }	
+
+	uint8_t i = 0;
+	
+	while (length--) {
+	
+		bytes[i++] = rx_buffer[rx_head];
+		
+		// If buffer is wrapped, increment RNCR, else just increment the RCR
+		if (rx_tail > rx_head) { uart->UART_RNCR++; } else { uart->UART_RCR++; }	
+			
+		// Increment head and account for wrap around
+		rx_head = (rx_head + 1) % DMA_SERIAL_RX_BUFFER_LENGTH;
+						
+		// Decrement counter keeping track of amount data in buffer
+		rx_count--;
+		
+		// Buffer is empty
+		if (rx_count == 0) { break; }
+		
+		// New line was received
+		if (bytes[i-1] == 0x0A) { break; }
+	}
+	
+	// Turn on receiver
+	uart->UART_PTCR = UART_PTCR_RXTEN;
+	
+	return i; 
+}
+
 uint8_t DmaSerial::put(const char* str) {
 
 	return put((uint8_t*)str, strlen(str));	
