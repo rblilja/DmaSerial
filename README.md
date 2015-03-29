@@ -1,7 +1,7 @@
 # DmaSerial
 Serial library utilising DMA on the SAM3X8E MCU (Arduino Due).  
 
-If used with the Arduino IDE, find the file variant.h and comment out the USARTClass and/or UARTClass objects that you want to replace with DmaSerial objects.
+If used with the Arduino environment, find the file variant.h and comment out the USARTClass and/or UARTClass objects that you want to replace with DmaSerial objects.
 
 For an instance, if replacing Serial1, you shall comment out the lines containing:
 
